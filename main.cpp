@@ -66,6 +66,8 @@ int main()
     Weekly weekly_box;
     Monthly monthly_box;
 
+    int day = 1;
+
     string command;
     while (true)
     {
@@ -85,7 +87,7 @@ int main()
             getline(cin, question);
             getline(cin, answer);
             FlashCard* new_card = new FlashCard(question, answer);
-            daily_box.get_flashcards().push_back(new_card);
+            daily_box.add_card(new_card);
             cout << "flashcard added to the daily box" << endl;
             cout << "Q : " << new_card->get_Q() << endl;
             cout << "A : " << new_card->get_A() << endl;
