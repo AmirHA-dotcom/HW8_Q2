@@ -48,12 +48,7 @@ class Daily : public Box
 
 };
 
-class Tuesday_Thursday : public Box
-{
-
-};
-
-class Friday : public Box
+class Weekly : public Box
 {
 
 };
@@ -68,8 +63,7 @@ class Monthly : public Box
 int main()
 {
     Daily daily_box;
-    Tuesday_Thursday twice_a_week_box;
-    Friday weekly_box;
+    Weekly weekly_box;
     Monthly monthly_box;
 
     string command;
@@ -99,6 +93,7 @@ int main()
 
         else if (regex_match(command, match, review_today_PAT))
         {
+            cout << "Flashcards:" << endl;
 
         }
 
