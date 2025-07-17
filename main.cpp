@@ -8,6 +8,7 @@ using namespace std;
 // -------------------REGEX-------------------
 
 regex review_today_PAT("^review today (\\d+)(\\s*)$");
+regex get_report_in_period_PAT(R"(^get report (\d+) (\d+)(\s*)$)");
 smatch match;
 
 // -------------------DATA-------------------
@@ -78,6 +79,7 @@ int main()
     int day = 1;
     vector<pair<FlashCard*, Box*>> review_queue;
     int day_of_last_review = 0;
+    vector<pair<int, int>> report; // correct, wrong and one based
 
     string command;
     while (true)
@@ -104,6 +106,7 @@ int main()
             cout << "A : " << new_card->get_A() << endl;
         }
 
+        // review cards
         else if (regex_match(command, match, review_today_PAT))
         {
             if (day != day_of_last_review)
@@ -130,6 +133,10 @@ int main()
             for (FlashCard* card : cards)
                 review_queue.emplace_back(card, &daily_box);
 
+            if (day >= report.size())
+            {
+                report.resize(day + 1, {0, 0});
+            }
             // if the todays cards are done
             if (review_queue.empty())
             {
@@ -162,6 +169,7 @@ int main()
                 if (user_answer == card->get_A())
                 {
                     cout << "Your answer was correct!" << endl;
+                    report[day].first++;
                     if (box == &daily_box)
                     {
                         weekly_box.add_card(card);
@@ -179,6 +187,7 @@ int main()
                 else
                 {
                     cout << "Your answer was incorrect. The correct answer is: " << card->get_A() << endl;
+                    report[day].second++;
                     if (box == &daily_box)
                     {
                         daily_box.add_card(card);
@@ -192,6 +201,33 @@ int main()
                         weekly_box.add_card(card);
                     }
                 }
+            }
+        }
+
+        // get report in a period
+        else if (regex_match(command, match, get_report_in_period_PAT))
+        {
+            int day1 = stoi(match[1]), day2 = stoi(match[2]);
+            if (day1 == day2)
+            {
+                cout << "Day: " << day1 << endl;
+                cout << "Correct Answers: " << report[day1].first << endl;
+                cout << "Incorrect Answers: " << report[day1].second << endl;
+                cout << "Total: " << report[day1].first + report[day1].second << endl;
+            }
+            else
+            {
+                int correct = 0, incorrect = 0;
+                for (int i = day1; i <= day2; i++)
+                {
+                    correct += report[i].first;
+                    incorrect += report[i].second;
+                }
+
+                cout << "Day: " << day1 << " to " << day2 << endl;
+                cout << "Correct Answers: " << correct << endl;
+                cout << "Incorrect Answers: " << incorrect << endl;
+                cout << "Total: " << correct + incorrect << endl;
             }
         }
 
