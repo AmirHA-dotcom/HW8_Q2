@@ -80,7 +80,6 @@ int main()
         // end program
         if (command == "END")
         {
-
             cout << "ENDED!!!" << endl;
             return 0;
         }
@@ -91,10 +90,11 @@ int main()
             string question, answer;
             getline(cin, question);
             getline(cin, answer);
-            daily_box.get_flashcards().push_back(new FlashCard(question, answer));
+            FlashCard* new_card = new FlashCard(question, answer);
+            daily_box.get_flashcards().push_back(new_card);
             cout << "flashcard added to the daily box" << endl;
-            cout << "Q : " << daily_box.get_flashcards().back()->get_Q() << endl;
-            cout << "A : " << daily_box.get_flashcards().back()->get_A() << endl;
+            cout << "Q : " << new_card->get_Q() << endl;
+            cout << "A : " << new_card->get_A() << endl;
         }
 
         else if (regex_match(command, match, review_today_PAT))
