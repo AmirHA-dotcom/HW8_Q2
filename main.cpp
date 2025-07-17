@@ -7,6 +7,8 @@ using namespace std;
 
 // -------------------REGEX-------------------
 
+regex review_today_PAT("^review today (\\d+)(\\s*)$)");
+smatch match;
 
 // -------------------DATA-------------------
 
@@ -21,11 +23,55 @@ public:
     string get_A () { return answer; }
 };
 
+class Box
+{
+protected:
+    vector<FlashCard*> flashcards;
+public:
+    void add_card(FlashCard* card)
+    {
+        flashcards.push_back(card);
+    }
+    vector<FlashCard*> get_flashcards() { return flashcards; }
+    virtual ~Box()
+    {
+        for (FlashCard* card : flashcards)
+        {
+            delete card;
+        }
+        flashcards.clear();
+    }
+};
+
+class Daily : public Box
+{
+
+};
+
+class Tuesday_Thursday : public Box
+{
+
+};
+
+class Friday : public Box
+{
+
+};
+
+class Monthly : public Box
+{
+
+};
+
 // -------------------INT MAIN-------------------
 
 int main()
 {
-    vector<FlashCard*> flashcards;
+    Daily daily_box;
+    Tuesday_Thursday twice_a_week_box;
+    Friday weekly_box;
+    Monthly monthly_box;
+
     string command;
     while (true)
     {
@@ -34,9 +80,7 @@ int main()
         // end program
         if (command == "END")
         {
-            for (FlashCard* flashCard : flashcards)
-                delete flashCard;
-            flashcards.clear();
+
             cout << "ENDED!!!" << endl;
             return 0;
         }
@@ -47,10 +91,15 @@ int main()
             string question, answer;
             getline(cin, question);
             getline(cin, answer);
-            flashcards.push_back(new FlashCard(question, answer));
+            daily_box.get_flashcards().push_back(new FlashCard(question, answer));
             cout << "flashcard added to the daily box" << endl;
-            cout << "Q : " << flashcards.back()->get_Q() << endl;
-            cout << "A : " << flashcards.back()->get_A() << endl;
+            cout << "Q : " << daily_box.get_flashcards().back()->get_Q() << endl;
+            cout << "A : " << daily_box.get_flashcards().back()->get_A() << endl;
+        }
+
+        else if (regex_match(command, match, review_today_PAT))
+        {
+
         }
 
         // invalid command
