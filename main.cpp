@@ -212,18 +212,29 @@ int main()
             int day1 = stoi(match[1]), day2 = stoi(match[2]);
             if (day1 == day2)
             {
-                cout << "Day: " << day1 << endl;
-                cout << "Correct Answers: " << report[day1].first << endl;
-                cout << "Incorrect Answers: " << report[day1].second << endl;
-                cout << "Total: " << report[day1].first + report[day1].second << endl;
+                if (day1 >= report.size())
+                {
+                    cout << "Day: " << day1 << endl;
+                    cout << "Correct Answers: 0" << endl;
+                    cout << "Incorrect Answers: 0" << endl;
+                    cout << "Total: 0" << endl;
+                } else {
+                    cout << "Day: " << day1 << endl;
+                    cout << "Correct Answers: " << report[day1].first << endl;
+                    cout << "Incorrect Answers: " << report[day1].second << endl;
+                    cout << "Total: " << report[day1].first + report[day1].second << endl;
+                }
             }
             else
             {
                 int correct = 0, incorrect = 0;
                 for (int i = day1; i <= day2; i++)
                 {
-                    correct += report[i].first;
-                    incorrect += report[i].second;
+                    if (i < report.size())
+                    {
+                        correct += report[i].first;
+                        incorrect += report[i].second;
+                    }
                 }
 
                 cout << "Day: " << day1 << " to " << day2 << endl;
