@@ -101,13 +101,17 @@ int main()
             getline(cin, question);
             getline(cin, answer);
             FlashCard* new_card = new FlashCard(question, answer);
-            daily_box.add_card(new_card);
+            if (day == day_of_last_review && !review_queue.empty()) {
+                review_queue.emplace_back(new_card, &daily_box);
+            }
+            else
+            {
+                daily_box.add_card(new_card);
+            }
             cout << "flashcard added to the daily box" << endl;
-//            cout << "Q : " << new_card->get_Q() << endl;
-//            cout << "A : " << new_card->get_A() << endl;
         }
 
-            // review cards
+        // review cards
         else if (regex_match(command, match, review_today_PAT))
         {
             if (day != day_of_last_review)
@@ -132,12 +136,6 @@ int main()
                 vector<FlashCard*> cards = daily_box.take_all_cards();
                 for (FlashCard* card : cards)
                     review_queue.emplace_back(card, &daily_box);
-            }
-
-            vector<FlashCard*> new_cards = daily_box.take_all_cards();
-            for (FlashCard* card : new_cards)
-            {
-                review_queue.emplace_back(card, &daily_box);
             }
 
             if (day >= report.size())
@@ -215,7 +213,7 @@ int main()
             }
         }
 
-            // get report in a period
+        // get report in a period
         else if (regex_match(command, match, get_report_in_period_PAT))
         {
             int day1 = stoi(match[1]), day2 = stoi(match[2]);
@@ -253,7 +251,7 @@ int main()
             }
         }
 
-            // get progress report
+        // get progress report
         else if (command == "get progress report")
         {
             int total_participant = 0;
@@ -269,8 +267,7 @@ int main()
             cout << "Mastered Flashcards: " << mastered_cards_count << endl;
         }
 
-            // start a new day
-            // start a new day
+        // start a new day
         else if (command == "next day")
         {
             for (const auto& item : review_queue)
@@ -278,11 +275,16 @@ int main()
                 FlashCard* card = item.first;
                 Box* source_box = item.second;
 
-                if (source_box == &monthly_box) {
+                if (source_box == &monthly_box)
+                {
                     weekly_box.add_card_to_front(card);
-                } else if (source_box == &weekly_box) {
+                }
+                else if (source_box == &weekly_box)
+                {
                     daily_box.add_card_to_front(card);
-                } else { // from daily_box
+                }
+                else
+                { // from daily_box
                     daily_box.add_card_to_front(card);
                 }
             }
@@ -321,11 +323,11 @@ int main()
             cout << "Your current streak is: " << streak << endl;
         }
 
-            // get streak
+        // get streak
         else if (command == "streak")
             cout << "Your current streak is: " << streak << endl;
 
-            // invalid command
+        // invalid command
         else
         {
             cout << "Invalid Command" << endl;
