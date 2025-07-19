@@ -257,6 +257,23 @@ int main()
             cout << "Mastered Flashcards: " << mastered_cards_count << endl;
         }
 
+        // start a new day
+        else if (command == "next day")
+        {
+            int streak = 0;
+            for (auto& d : report)
+            {
+                if (d.first + d.second > 0)
+                    streak++;
+                else
+                    streak = 0;
+            }
+            day++;
+            cout << "--------------------------------------------------" << endl;
+            cout << "It is day " << day << " of your journey." << endl;
+            cout << "Your current streak is: " << streak << endl;
+        }
+
         // invalid command
         else
         {
