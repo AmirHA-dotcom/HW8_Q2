@@ -43,6 +43,11 @@ public:
         return temp;
     }
 
+    void add_card_to_front(FlashCard* card)
+    {
+        flashcards.insert(flashcards.begin(), card);
+    }
+
     virtual ~Box()
     {
         for (FlashCard* card : flashcards)
@@ -83,6 +88,7 @@ int main()
     int mastered_cards_count = 0;
 
     int streak = 0;
+    bool reviewed_this_day = false;
 
     string command;
     while (true)
@@ -114,27 +120,30 @@ int main()
         {
             if (day != day_of_last_review)
             {
+                for (const auto& item : review_queue)
+                    item.second->add_card_to_front(item.first);
+
                 day_of_last_review = day;
                 review_queue.clear();
-            }
-            // monthly cards
-            if (day % 30 == 0)
-            {
-                vector<FlashCard*> cards = monthly_box.take_all_cards();
+                // monthly cards
+                if (day % 30 == 0)
+                {
+                    vector<FlashCard*> cards = monthly_box.take_all_cards();
+                    for (FlashCard* card : cards)
+                        review_queue.emplace_back(card, &monthly_box);
+                }
+                    // weekly cards
+                if (day % 7 == 0)
+                {
+                    vector<FlashCard*> cards = weekly_box.take_all_cards();
+                    for (FlashCard* card : cards)
+                        review_queue.emplace_back(card, &weekly_box);
+                }
+                // daily cards
+                vector<FlashCard*> cards = daily_box.take_all_cards();
                 for (FlashCard* card : cards)
-                    review_queue.emplace_back(card, &monthly_box);
+                    review_queue.emplace_back(card, &daily_box);
             }
-            // weekly cards
-            else if (day % 7 == 0)
-            {
-                vector<FlashCard*> cards = weekly_box.take_all_cards();
-                for (FlashCard* card : cards)
-                    review_queue.emplace_back(card, &weekly_box);
-            }
-            // daily cards
-            vector<FlashCard*> cards = daily_box.take_all_cards();
-            for (FlashCard* card : cards)
-                review_queue.emplace_back(card, &daily_box);
 
             if (day >= report.size())
             {
@@ -143,7 +152,7 @@ int main()
             // if the todays cards are done
             if (review_queue.empty())
             {
-                cout << "You've completed today's review!" << endl;
+                cout << "You've completed today's review" << endl;
                 continue;
             }
             // getting all the cards from that we need
@@ -151,6 +160,7 @@ int main()
             vector<pair<FlashCard*, Box*>> session_cards;
             session_cards.assign(review_queue.begin(), review_queue.begin() + number_of_cards_to_review);
             review_queue.erase(review_queue.begin(), review_queue.begin() + number_of_cards_to_review);
+            reviewed_this_day = true;
 
             // showing the Qs
             cout << "Flashcards:" << endl;
@@ -242,10 +252,7 @@ int main()
             for (auto& d : report)
             {
                 if (d.first + d.second > 0)
-                {
                     total_participant++;
-                    streak++;
-                }
             }
             cout << "Challenge Progress Report:" << endl;
             cout << "Day of the Challenge: " << day << endl;
@@ -257,10 +264,26 @@ int main()
         // start a new day
         else if (command == "next day")
         {
-            if (report[day].first + report[day].second == 0)
-                streak = 0;
-            else
+            if (reviewed_this_day)
+            {
                 streak++;
+            }
+            else
+            {
+                streak = 0;
+                if (day % 30 == 0) {
+                    vector<FlashCard*> cards = monthly_box.take_all_cards();
+                    for (FlashCard* card : cards) {
+                        weekly_box.add_card(card);
+                    }
+                }
+                if (day % 7 == 0) {
+                    vector<FlashCard*> cards = weekly_box.take_all_cards();
+                    for (FlashCard* card : cards) {
+                        daily_box.add_card(card);
+                    }
+                }
+            }            reviewed_this_day = false;
             day++;
             cout << "--------------------------------------------------" << endl;
             cout << "It is day " << day << " of your journey." << endl;
@@ -268,7 +291,7 @@ int main()
         }
 
         // get streak
-        if (command == "streak")
+        else if (command == "streak")
             cout << "Your current streak is: " << streak << endl;
 
         // invalid command
