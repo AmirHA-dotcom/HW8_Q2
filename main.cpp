@@ -80,6 +80,7 @@ int main()
     vector<pair<FlashCard*, Box*>> review_queue;
     int day_of_last_review = 0;
     vector<pair<int, int>> report; // correct, wrong and one based
+    int mastered_cards_count = 0;
 
     string command;
     while (true)
@@ -181,6 +182,7 @@ int main()
                     else    // monthly
                     {
                         delete card;
+                        mastered_cards_count++;
                     }
                 }
                 // wrong answer
@@ -229,6 +231,30 @@ int main()
                 cout << "Incorrect Answers: " << incorrect << endl;
                 cout << "Total: " << correct + incorrect << endl;
             }
+        }
+
+        // get progress report
+        else if (command == "get progress report")
+        {
+            int streak = 0;
+            int total_participant = 0;
+            for (auto& d : report)
+            {
+                if (d.first + d.second > 0)
+                {
+                    total_participant++;
+                    streak++;
+                }
+                else
+                {
+                    streak = 0;
+                }
+            }
+            cout << "Challenge Progress Report:" << endl;
+            cout << "Day of the Challenge: " << day << endl;
+            cout << "Streak: " << streak << endl;
+            cout << "Total Days Participated: " << total_participant << endl;
+            cout << "Mastered Flashcards: " << mastered_cards_count << endl;
         }
 
         // invalid command
