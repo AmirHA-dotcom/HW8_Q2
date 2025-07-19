@@ -107,7 +107,7 @@ int main()
 //            cout << "A : " << new_card->get_A() << endl;
         }
 
-        // review cards
+            // review cards
         else if (regex_match(command, match, review_today_PAT))
         {
             if (day != day_of_last_review)
@@ -121,7 +121,7 @@ int main()
                     for (FlashCard* card : cards)
                         review_queue.emplace_back(card, &monthly_box);
                 }
-                    // weekly cards
+                // weekly cards
                 if (day % 7 == 0)
                 {
                     vector<FlashCard*> cards = weekly_box.take_all_cards();
@@ -132,6 +132,12 @@ int main()
                 vector<FlashCard*> cards = daily_box.take_all_cards();
                 for (FlashCard* card : cards)
                     review_queue.emplace_back(card, &daily_box);
+            }
+
+            vector<FlashCard*> new_cards = daily_box.take_all_cards();
+            for (FlashCard* card : new_cards)
+            {
+                review_queue.emplace_back(card, &daily_box);
             }
 
             if (day >= report.size())
@@ -188,7 +194,7 @@ int main()
                         mastered_cards_count++;
                     }
                 }
-                // wrong answer
+                    // wrong answer
                 else
                 {
                     cout << "Your answer was incorrect. The correct answer is: " << card->get_A() << endl;
@@ -209,7 +215,7 @@ int main()
             }
         }
 
-        // get report in a period
+            // get report in a period
         else if (regex_match(command, match, get_report_in_period_PAT))
         {
             int day1 = stoi(match[1]), day2 = stoi(match[2]);
@@ -247,7 +253,7 @@ int main()
             }
         }
 
-        // get progress report
+            // get progress report
         else if (command == "get progress report")
         {
             int total_participant = 0;
@@ -263,7 +269,7 @@ int main()
             cout << "Mastered Flashcards: " << mastered_cards_count << endl;
         }
 
-        // start a new day
+            // start a new day
             // start a new day
         else if (command == "next day")
         {
@@ -315,11 +321,11 @@ int main()
             cout << "Your current streak is: " << streak << endl;
         }
 
-        // get streak
+            // get streak
         else if (command == "streak")
             cout << "Your current streak is: " << streak << endl;
 
-        // invalid command
+            // invalid command
         else
         {
             cout << "Invalid Command" << endl;
