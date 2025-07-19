@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <algorithm>
 
 using namespace std;
 
@@ -143,8 +144,10 @@ int main()
                 cout << "You've completed today's review" << endl;
                 continue;
             }
+
             // getting all the cards from that we need
-            int number_of_cards_to_review = stoi(match[1]);
+            int requested_count = stoi(match[1]);
+            int number_of_cards_to_review = min(requested_count, (int)review_queue.size());
             vector<pair<FlashCard*, Box*>> session_cards;
             session_cards.assign(review_queue.begin(), review_queue.begin() + number_of_cards_to_review);
             review_queue.erase(review_queue.begin(), review_queue.begin() + number_of_cards_to_review);
