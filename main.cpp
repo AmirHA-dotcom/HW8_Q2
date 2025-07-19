@@ -82,6 +82,8 @@ int main()
     vector<pair<int, int>> report; // correct, wrong and one based
     int mastered_cards_count = 0;
 
+    int streak = 0;
+
     string command;
     while (true)
     {
@@ -103,8 +105,8 @@ int main()
             FlashCard* new_card = new FlashCard(question, answer);
             daily_box.add_card(new_card);
             cout << "flashcard added to the daily box" << endl;
-            cout << "Q : " << new_card->get_Q() << endl;
-            cout << "A : " << new_card->get_A() << endl;
+//            cout << "Q : " << new_card->get_Q() << endl;
+//            cout << "A : " << new_card->get_A() << endl;
         }
 
         // review cards
@@ -236,7 +238,6 @@ int main()
         // get progress report
         else if (command == "get progress report")
         {
-            int streak = 0;
             int total_participant = 0;
             for (auto& d : report)
             {
@@ -244,10 +245,6 @@ int main()
                 {
                     total_participant++;
                     streak++;
-                }
-                else
-                {
-                    streak = 0;
                 }
             }
             cout << "Challenge Progress Report:" << endl;
@@ -260,19 +257,19 @@ int main()
         // start a new day
         else if (command == "next day")
         {
-            int streak = 0;
-            for (auto& d : report)
-            {
-                if (d.first + d.second > 0)
-                    streak++;
-                else
-                    streak = 0;
-            }
+            if (report[day].first + report[day].second == 0)
+                streak = 0;
+            else
+                streak++;
             day++;
             cout << "--------------------------------------------------" << endl;
             cout << "It is day " << day << " of your journey." << endl;
             cout << "Your current streak is: " << streak << endl;
         }
+
+        // get streak
+        if (command == "streak")
+            cout << "Your current streak is: " << streak << endl;
 
         // invalid command
         else
